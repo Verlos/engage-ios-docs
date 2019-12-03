@@ -1,7 +1,6 @@
-# ProximiPRO Docs
+# EngageSDK Docs
 
-
-Welcome to Engage SDK user guide. Here, you can find all the code snippets and required to use each and every feature of the Engage SDK. You can also view SDK documentation [here](docs/index.html). Let's get started.
+Welcome to Engage SDK user guide. Here, you can find all the code snippets and required to use each and every feature of the Engage SDK. You can also view SDK documentation [here](docs/engage/index.html). Let's get started.
 
 
 ## Add Engage in your Project
@@ -14,6 +13,14 @@ pod 'EngageSDK'
 
 just type pod install in the terminal and all set.
 You can find documentation of the SDK [here](docs/engage/index.html). Follow this user guide to get started with the SDK.
+
+## Requirements
+
+>iOS 11.0+
+
+>Xcode 10.3
+
+`Note -> Supports up to xcode 10.3` 
 
 ## Initialization
 
@@ -156,7 +163,7 @@ engage.start { (message, permission) in
     // message - error message
     // permission- true/false
     // other wise your scan is started
-    manager.onBeaconCamped = { beacon, location in
+    engage.onBeaconCamped = { beacon, location in
         // called on beacon detection
     }
     engage.onBeaconExit = { beacon, location in
@@ -294,6 +301,15 @@ func handleNotification(userInfo: [AnyHashable: Any]) {
     }
 ```
 
+### FCM notification from SDK
+
+Geting notification from FCM you just get the token from firebase and pass to SDK.
+
+```swift
+    engage.callPushNotificationRegister(pushToken: "FCM Token", responseData: { (response) in
+            // do nothing
+        })
+```
 
 ### Update Beacon UUID & API key
 
@@ -306,6 +322,7 @@ The SDK provides a way to change the API key used by the SDK.
 > Once the API key is changed, the SDK re-verifies it on the next run to make sure that it is a valid API key. If it fails to verify the new API key then it won't initialize the SDK. Also, for this change to be effective, the app needs to be restarted.
 
 ```swift
+// returns true if the uuid is updated successfully, false otherwise
  Re-initialized the SDK
 ```
 
@@ -332,6 +349,32 @@ iOS don't provide TxPower in beacon, for distance calculation SDK provide the op
 engage.txPower = txPower_value : `https://ibb.co/hfG0bQZ`
 ```
 
+### Logs
+To enable the event log SDK provide the log methods 
+
+##### FCM LOG
+Push notification log
+```swift
+    guard let engage = EngageSDK.shared else { return }
+    engage.callLogPushNotification(notificationId: notifiaction id "id", action: action like "open" or "click") {  (response) in
+        print(response ?? "")
+    }
+```
+
+#### Event log
+
+In event log you can pass the log type like .details, .fav and .social.
+```swift
+       guard let engage = EngageSDK.shared else { return }
+        engage.callLogEvent(logType: .details, contentId: "contentId", contentType: "contentType", param2: nil, beacon: "current beacon", location: "current location") { (response) in
+            if let response = response {
+                print(response)
+            } else {
+                print("fail")
+            }
+        }
+```
+
 ### Log out from SDK
 
 Logging out from SDK stops the ongoing scans and resets all the settings to default.
@@ -339,3 +382,5 @@ Logging out from SDK stops the ongoing scans and resets all the settings to defa
 ```swift
 engage.logout()
 ```
+
+
